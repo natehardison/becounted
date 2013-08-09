@@ -1,0 +1,49 @@
+<script type="text/javascript">
+	function reg_form_complete() {
+		next_status();
+		// while waiting for ajax...
+		var title = "Registration Form Complete!";
+		var dialog = new Dialog().showChoice(title, reg_form_complete_message, "Recruit now!", "Later");
+		dialog.onconfirm = function() {
+			document.setLocation("<%= url_for(:controller => 'recruit', :canvas => true) %>");
+		}
+	}
+</script>
+<fb:js-string var="reg_form_complete_message">
+    <div>
+        <h1>Congratulations on completing your registration form!</h1>
+        <p class="legible">
+        	  It should take no more than
+			2 weeks for your local elections office to process your application.  It's a bit
+			slow though, and the election's only getting closer.  The best time to recruit others
+			to vote is now&mdash;and it takes less than a minute to send an invitation to BeCounted!
+        </p>
+    </div>
+</fb:js-string>
+<!--<div class="bc_due">DUE IN <%#= num_days_until(@info[:deadline]) %> DAYS</div>-->
+<br class="bc_clearfix" />
+
+<% if @info[:form] == :new_hampshire -%>
+	<p>
+		To register in New Hampshire, you have to contact your local elections office for a
+		registration form.  Either send snail mail to the address below, or give them a call
+		and get it done today!
+	</p>
+<% elsif @info[:form] == :rock_the_vote -%>
+	<fb:rock-the-vote><%= image_tag('fill_out.png', :style => "margin-top: 10px;") %></fb:rock-the-vote>
+<% elsif @info[:form] == :wyoming -%>
+	<a href="<%= @info[:form_link] %>" class="bc_button" style="margin-top: 10px;"><span>Fill out the form!</span></a>
+<% end -%>
+<div>
+	<% if @info[:address].nil? -%>
+		<p>We're sorry, we don't have updated information for you at this time.</p>
+	<% else -%>
+		<%= @info[:address].to_html %>
+	<% end -%>
+</div>
+<div><%= "Phone: #{@info[:phone]}" unless @info[:phone].nil? %></div>
+<div class="bc_step_explanation" style="text-align:left">
+    You might also find registration forms at the library, post office, etc.
+</div>
+<a href="#" class="bc_button yellow right" onclick="reg_form_complete(); return false;"><span>Done</span></a>
+<br class="bc_clearfix" />

@@ -1,0 +1,85 @@
+<%= render :partial => 'walkthrough_css' %>
+<%#= stylesheet_link_tag ('walkthrough.css') %>
+<script type="text/javascript">
+	function show_absentee_hurdles() {
+		var title = "Absentee Hurdles"
+		var dialog = new Dialog().showChoice(title, absentee_hurdles, "Cool", "Not cool");
+		dialog.onconfirm = function() {
+			submit_form("Absentee");
+		}	
+	}
+	
+    function submit_form(voting_method){
+        $("voting_method").setValue(voting_method);
+        $("bc_form").submit();
+    }
+</script>
+<fb:js-string var="absentee_hurdles">
+	<div>
+		<h3>Keep in mind that if you vote absentee:</h3>
+		<%= list_hurdles(@home_abs_hurdles) %>
+	</div>
+</fb:js-string>
+<div class="bc_recruit_container">
+    <!--div class="bc_recruit_message">
+        <%= h(@home_state.name) %>
+    </div-->
+    <div class="bc_recruit_boxes_container">
+        <div>
+            <div class="bc_recruit_content_box" style="width: 600px;">
+                <p style="font-weight:bold; color:#888; font-size:12px;">
+                    <%= "Home & School" unless @college.nil? %>
+                </p>
+                <div class="bc_recruit_message">
+                    <span style="color:#419B3F; font-weight:bold;"><%= h(@home_state.name) %></span>
+                </div> 
+                <a href="<%= url_for(:controller => 'walkthrough', :action => 'select_home_and_college_states') %>">Pick another state</a>
+            </div>
+        </div>
+		<div class="bc_recruit_content_box" style="width: 600px;">
+        	<p>Requirements</p>
+            <%= to_ul(@home_voting_reqs) %>
+        </div>
+		<div class="bc_clearfixleft"></div>
+        <form id="bc_form" action="<%= url_for(:controller => :walkthrough, :action => 'set_voting_method') %>" method="post">
+			<% unless @register_state_id.nil? %>
+				<div class="bc_recruit_content_box" style="width: 600px;">
+					<h3 style="padding-top:.5em;">Need to vote in a different precinct than where you're already registered?</h3>
+					<% if @college.nil? -%>
+						<p>
+							You're only allowed to vote where you're registered.  <%= h(@home_state.name) %> organizes voting
+							precincts by <%= @home_state.votes_by_town? ? "town" : "county" %>, so if you want to vote at the 
+							polls in a different <%= @home_state.votes_by_town? ? "town" : "county" %>, you'll have to
+							re-register.  If you'd rather not register again, you should look into voting absentee.
+						</p>
+					<% else -%>
+            			<p>
+                			You're only allowed to vote where you've registered. Hence, if you registered in your home county,
+							you'll need to register again if you want to vote at the polls at school. If you'd rather not 
+							register again, you should look into voting absentee.
+            			</p>
+					<% end -%>
+					<label><input type="checkbox" selected="false" name="re_register" />I need to re-register!</label>
+		        </div>
+			<% end -%>
+        	<div>
+       			<div class="bc_recruit_content_box" style="width: 600px">
+            		<% if @home_state.name == "Oregon" %>
+            			<h1 align="center">You can't vote at the polls in Oregon</h1>
+            		<% else -%>
+            			<a href="#" class="bc_button" style="margin: 5px;" onclick='submit_form("InPerson"); return false;'><span>Vote in <%= h(@home_state.code) %>, at the polls.</span></a>
+            			<br class="bc_clearfix" />
+            		<% end -%>
+            		<a href="#" class="bc_button" style="margin: 5px;" onclick='show_absentee_hurdles(); return false;'><span>Vote in <%= h(@home_state.code) %>, by mailing an absentee ballot.</span></a>
+				</div>
+        		<input type="hidden" id="college_id" name="college_id" value="<%= h(@college.id) unless @college.nil? %>"/>
+				<input type="hidden" id="dorm_id" name="dorm_id" value="<%= h(@dorm.id) unless @dorm.nil? %>"/>
+				<input type="hidden" id="home_state_id" name="home_state_id" value="<%= h(@home_state.id) %>"/>
+				<input type="hidden" id="register_state_id" name="register_state_id" value="<%= h(@register_state_id) %>"/>
+				<input type="hidden" id="voting_method" name="voting_method" />
+				<input type="hidden" id="voting_state_id" name="voting_state_id" value="<%= h(@home_state.id) %>"/>
+    		</div>
+		    <div class="bc_clearfixleft"></div>
+		</form>
+	</div>
+</div>

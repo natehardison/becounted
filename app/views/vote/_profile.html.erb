@@ -1,0 +1,23 @@
+<div>
+    <fb:profile-pic uid="<%= @user.fb_uid %>" linked="false" />
+	<h1 align="center">
+		<fb:name uid="<%= @user.fb_uid %>" capitalize="true" useyou="false" firstnameonly="true" linked="false" possessive="true" />&nbsp;BeCounted Profile
+	</h1>
+</div>
+
+<div id="bc_profile">
+<div id="bc_profile_left">
+	<h3>My info</h3>
+	<h4>College: <%= @user.college.name %></h4>
+	<h4>Dorm: <%= @user.dorm.name %></h4>
+	<h4>Home state: <%= @user.home_state.name %></h4>
+	<h4>Voting state: <%= @user.voting_state.name %></h4>
+	<h4>Voting method: <%= @user.voting_method::TITLE %></h4>
+	<h4>Current step: <%= @user.status::TITLE %></h4>
+	<div id="bc_achievements" style="margin-top: 50px;">
+		<h3 align="center">My achievements</h3>
+		<% @user.achievements.each do |achievement| -%>
+			<h4><%= achievement.action.name %></h4>
+		<% end -%>
+	</div>
+</div>

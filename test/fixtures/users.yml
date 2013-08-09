@@ -1,0 +1,29 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+# one:
+#   column: value
+#
+# two:
+#   column: value
+bob:
+    id:
+    college:
+    home_state: Alabama
+    
+john:
+    id:
+    college: Stanford
+    home_state: Missouri
+    
+
+michael:
+    id: 
+    college: Stanford
+    home_state: California
+    
+nate:
+
+tina:
+    id:
+    college:
+    home_state: Florida

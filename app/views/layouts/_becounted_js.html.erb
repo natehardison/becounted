@@ -1,0 +1,77 @@
+<script type="text/javascript">
+<!--
+
+function $(elem){
+	if (typeof elem == "string") {
+		var elem = document.getElementById(elem);
+	}
+	if(elem) {
+		elem = extend(elem, Element);
+	}
+	return elem;
+}
+
+function extend(instance, hash){
+    for (var name in hash) {
+        instance[name] = hash[name]
+    }
+	return instance;
+}
+
+function ajax_request(url, options) {
+    var ajax = new Ajax();
+    ajax.responseType = Ajax.JSON;
+    ajax.ondone = options["ondone"];
+    if (options["onerror"]) {
+        ajax.onerror = options["onerror"];
+    }
+  	var params = {};
+    for (var param in options["params"]) {
+        params[param] = options["params"][param];
+    }
+  	// Can't use this if partials contain FBML, so default
+	// to false unless explicitly set.
+  	if (options["useLocalProxy"] == true) {
+		ajax.useLocalProxy = options["useLocalProxy"];
+	}
+    ajax.requireLogin = true;
+	ajax.post(url, params);
+}
+
+function preload_image(src) {
+	var image = document.createElement("img");
+	image.setSrc(src);
+	$("preloaded_images").appendChild(image);
+}
+
+var Element = {
+	animate_hide: function(milliseconds){
+		Animation(this).to("height", "0px").duration(milliseconds).blind().hide().go();
+	},
+	animate_show: function(/* optional */innerFBML) {
+		if (innerFBML) {
+            this.setInnerFBML(innerFBML);
+        }
+		Animation(this).to("height", "auto").from("0px").duration(300).blind().show().go();
+	},
+	hidden: function(){
+		return !this.visible();
+	},
+    hide: function(){
+        this.setStyle("display", "none");
+    },
+    show: function(/* optional */innerFBML){
+        if (innerFBML) {
+            this.setInnerFBML(innerFBML);
+        }
+        this.setStyle("display", "block");
+    },
+    visible: function(){
+        return (this.getStyle("display") != "none");
+    }
+}
+
+// Hide the "Javascript not enabled" message
+$("no_script").hide();
+//-->
+</script>

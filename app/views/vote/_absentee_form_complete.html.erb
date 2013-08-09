@@ -1,0 +1,19 @@
+<!-- IVARS: none -->
+<br class="bc_clearfix" />
+<div class="bc_step_explanation">
+    The best way to know if you're registered as an absentee 
+	voter is to contact your local elections office.
+</div>
+
+<% if @info[:ma_sucks] %>
+	<a href="<%= MASSACHUSETTS_URL %>" class="bc_button" target="_blank"><span>Local elections office info</span>
+<% elsif @info[:address].nil? -%>
+    <p>We're sorry, we don't have updated information for you at this time.</p>
+<% else -%>
+	<p class="bc_clearfix">Elections office info for <%= @info[:place_name] %>:</p>
+    <%= @info[:address].to_html %>
+<% end -%>
+<%= "Phone: #{@info[:phone]}" unless @info[:phone].blank? %>
+<a href="#" class="bc_button yellow right" onclick="next_status(); return false;"><span>Done</span></a>
+
+<br class="bc_clearfix" />

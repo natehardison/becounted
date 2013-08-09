@@ -1,0 +1,90 @@
+<script type="text/javascript">
+    <!--
+    var Content = {
+        get_link: function(){
+            return extend($("link_" + this.get_status()), Link);
+        },
+        get_status: function(){
+            return parseInt(this.getId().replace("content_", ""));
+        },
+        hide: function(){
+            Animation(this).to("height", "0px").blind().hide().go();
+            // HACK HACK HACK remove current class name from parent elem
+            this.getParentNode().removeClassName("current");
+        },
+        next: function(){
+            var next_status = this.get_status() + 1;
+            return extend($("content_" + next_status), Content);
+        },
+        show: function(inner_fbml){
+            this.setInnerFBML(inner_fbml);
+            // HACK HACK HACK add current class name to parent elem
+            this.getParentNode().addClassName("current");
+            Animation(this).to("height", "auto").from("0px").blind().show().go();
+        }
+    };
+    
+    var Link = {
+        get_content: function(){
+            return extend($("content_" + this.get_status()), Content);
+        },
+        get_status: function(){
+            return parseInt(this.getId().replace("link_", ""));
+        }
+    };
+    
+    // Advances the user to the next status
+    function next_status(){
+        var url = "<%= url_for(:controller => 'vote', :action => 'next_status', :only_path => false, :canvas => false) %>";
+        var ajax_successful = change_status_with_ajax(url);
+        if (!ajax_successful) 
+            return;
+        
+        // Animate while waiting for Ajax
+        current_div.hide();
+        //current_div.get_link().show();
+    }
+    
+    /*
+     * Takes the user back to an old status
+     * @param statusID The status to return to
+     */
+    function go_back(status){
+        var url = "<%= url_for(:controller => 'vote', :action => 'go_back', :only_path => false, :canvas => false) %>";
+        var ajax_successful = change_status_with_ajax(url, {
+            "status": status
+        });
+        if (!ajax_successful) 
+            return;
+        
+        // Hide all of the old stuff while waiting on Ajax
+        for (var div = $("content_" + status); div != null; div = div.next()) {
+            current_div.hide();
+            var link = div.get_link();
+            if (link.visible()) {
+                link.hide();
+            }
+        }
+    }
+    
+    function change_status_with_ajax(url, params){
+        if (ajax_in_progress) 
+            return false;
+        ajax_in_progress = true;
+        var options = {};
+        options["ondone"] = function(response){
+            var new_div = extend($("content_" + response.id), Content);
+            new_div.show(response.fbml_partial);
+            current_div = new_div;
+            ajax_in_progress = false;
+        }
+        options["params"] = params;
+        ajax_request(url, options);
+        return true;
+    }
+    
+    var ajax_in_progress = false;
+    var current_div = extend($("content_<%= @user.status_id %>"), Content);
+    
+    //-->
+</script>

@@ -1,0 +1,14 @@
+<%= render :partial => 'stats/stats_css' %>
+<p>
+<a href="<%= url_for(:controller => 'stats') %>">Stats Home</a> &raquo; <a href="<%= url_for(:action => 'voter_states') %>">Voter State Breakdown</a>
+</p>
+<br />
+<%= content_tag(:h1, "Stats for #{h(@state.name)} Registered Voters") %>
+<br />
+
+<%= render(:partial => 'aggregate_table') %>
+
+<div style="margin-top: 10px;">
+</div>
+
+<%= render(:partial => 'breakdown_table') %>

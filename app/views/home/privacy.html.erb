@@ -1,0 +1,120 @@
+<style>
+a.button_box_highlighted {
+white-space: nowrap;
+display: block;
+}
+a.button_box_highlighted div.button_box_left {
+background: url('<%= image_path('button_box_left.png') %>') left;
+width: 7px;
+height: 20px;
+float: left;
+}
+a.button_box_highlighted div.button_box_right {
+background: url('<%= image_path('button_box_right.png') %>') right;
+width: 7px;
+height: 20px;
+float: right;
+}
+a.button_box_highlighted div.button_box_middle {
+white-space: nowrap;
+background-image: url('<%= image_path('button_box_middle.png') %>');
+background-repeat: repeat-x;
+height: 20px;
+padding: 3px 3px 3px 3px;
+padding-right: 10px;
+font-size: 11px;
+font-weight: bold;
+color: #fff;
+}
+
+a.button_box_not_highlighted {
+white-space: nowrap;
+display: block;
+}
+a.button_box_not_highlighted div.button_box_left {
+background: none;
+width: 7px;
+height: 20px;
+float: left;
+}
+a.button_box_not_highlighted div.button_box_right {
+background: none;
+width: 7px;
+height: 20px;
+float: right;
+}
+a.button_box_not_highlighted div.button_box_middle {
+white-space: nowrap;
+cursor:pointer;
+height: 20px;
+padding: 3px 3px 3px 3px;
+padding-right: 10px;
+font-size: 11px;
+font-weight: bold;
+color: #304d90;
+}
+</style>
+
+<h1 align="center">BeCounted Privacy Page</h1>
+<p>
+	We believe that voting is something to be proud of.  However, privacy is a personal matter, 
+	so you get to decide whether your friends get to see information about your progress through
+	the voting process. This information includes:
+</p>
+<ul>
+	<li>What state you are voting in</li>
+	<li>Your current status in the voting process (e.g. registering, waiting for absentee ballot)</li>
+	<li>Your BeCounted achievement badges</li>
+	<li>Your BeCounted points</li>
+</ul>
+<p>
+	This information will be <strong>viewable only to your friends.</strong>  We will never show any
+	personally identifiable information about you to anyone else.
+</p>
+<div style="margin: auto;">
+
+    <table align="center">
+    <tr>
+    <% if @user.privacy_enabled? -%>
+        <td align="right">
+            <a href="<%= url_for(:controller => 'home', :action => 'save_privacy', :enabled => '0') %>" class="button_box_not_highlighted">
+                <div class="button_box_left"></div>
+                <div class="button_box_right"></div>
+                <div class="button_box_middle">Show Info to Friends</div>
+            </a>
+        </td>
+        <td align="left">
+            <a id="show_all_users_div" class="button_box_highlighted">
+                <div class="button_box_left"></div>
+                <div class="button_box_right"></div>
+                <div class="button_box_middle">Information Hidden</div>
+            </a>
+        </td>
+    </div>
+    <% else -%>
+        <td align="right">
+            <a class="button_box_highlighted">
+                <div class="button_box_left"></div>
+                <div class="button_box_right"></div>
+                <div class="button_box_middle">Information Shown</div>
+            </a>
+        </td>
+        <td align="left">
+            <a href="<%= url_for(:controller => 'home', :action => 'save_privacy', :enabled => '1') %>" id="show_all_users_div" class="button_box_not_highlighted">
+                <div class="button_box_left"></div>
+                <div class="button_box_right"></div>
+                <div class="button_box_middle">Hide Info from Friends</div>
+            </a>
+        </td>
+    <% end -%>
+    </tr>
+    </table>
+
+</div>
+<p>
+	To make BeCounted successful and adaptive, we need to show the program's progress.  
+	This means that the program will show number of users, home and voting state, voting 
+	method and progress.  All this information will be completely anonymous and impersonal 
+	- only non-personal, statistical information will be publicly available.  Please remove 
+	the application if you are uncomfortable with that provision.
+</p>

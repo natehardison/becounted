@@ -1,0 +1,48 @@
+<script type="text/javascript">
+	function abs_form_complete() {
+		next_status();
+		// while waiting for ajax...
+		var title = "Absentee Ballot Request Complete!";
+		var dialog = new Dialog().showChoice(title, abs_form_complete_message, "Recruit now!", "Later");
+		dialog.onconfirm = function() {
+			document.setLocation("<%= url_for(:controller => 'recruit', :canvas => true) %>");
+		}
+	}
+</script>
+<fb:js-string var="abs_form_complete_message">
+    <div align="center">
+        <h1>Congratulations on completing your absentee form!</h1>
+        <p class="legible">
+        	  It should take no more than
+			2 weeks for your local elections office to process your application.  It's a little
+			slow though, and the election's only getting closer.  The best time to recruit others
+			to vote is now&mdash;and it takes less than a minute to send an invitation to BeCounted!
+        </p>
+    </div>
+</fb:js-string>
+<!--<div class="bc_due">
+    DUE IN <%#= num_days_until(@info[:deadline]) %> DAYS
+</div>-->
+<% if @info[:form].nil? -%>
+	<p>Contact your local elections office to request an absentee ballot!</p>
+<% else -%>
+	<p class="bc_clearfix">You know the drill. Fill out, print, and mail.</p>
+	<a href="<%= @info[:form] %>" class="bc_button"><span>Fill out the form!</span></a>
+	<!--<div class="bc_step_explanation">
+		<a href="" target="_blank"><img src="" /></a>
+    	Get Adobe Reader to view the form!
+	</div>-->
+<% end -%> 
+<% if @info[:ma_sucks] -%>
+	<a href="<%= MASSACHUSETTS_URL %>" class="bc_button" target="_blank"><span>Find local elections office!</span></a>
+<% elsif @info[:address].nil? -%>
+    <p>We're sorry, we don't have updated information for you at this time.</p>
+<% else -%>
+	<p class="bc_clearfix">Elections office info for <%= @info[:place_name] %>:</p>
+    <%= @info[:address].to_html %>
+<% end -%>
+<%= "Phone: #{@info[:phone]}" unless @info[:phone].blank? %>
+
+<a href="#" class="bc_button yellow right" onclick="abs_form_complete(); return false;"><span>Done</span></a>
+
+<br class="bc_clearfix" />

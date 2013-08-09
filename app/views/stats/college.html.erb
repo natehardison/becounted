@@ -1,0 +1,14 @@
+<%= render :partial => 'stats/stats_css' %>
+<p>
+<a href="<%= url_for(:controller => 'stats') %>">Stats Home</a> &raquo; <a href="<%= url_for(:action => 'college_states') %>">College State Breakdown</a> &raquo; 
+<a href="<%= url_for(:action => 'college_state', :id => @college.state.id) %>">Stats for <%= h(@college.state.name) %> Colleges</a>
+</p> 
+<%= content_tag(:h1, "Stats for #{h(@college.name)} Students") %>
+<br /> 
+
+<%= render(:partial => 'aggregate_table') %>
+
+<div style="margin-top: 10px;">
+</div>
+
+<%= render(:partial => 'breakdown_table') %>

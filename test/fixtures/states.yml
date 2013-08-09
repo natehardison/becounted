@@ -1,0 +1,56 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+Alabama:
+    id: 1
+    name: Alabama
+    code: AL
+    competitive: 6
+    votes_by_county: true
+    reg_deadline:
+
+California:
+    id: 2
+    name: California
+    code: CA
+    competitive: 5
+    votes_by_county: true
+    reg_deadline:
+    
+Connecticut:
+    id: 3
+    name: Connecticut
+    competitive: 4
+    votes_by_county: false
+    reg_deadline:
+
+Idaho:
+    id: 4
+    name: Idaho
+    code: ID
+    competitive: 7
+    votes_by_county: true
+    reg_deadline:
+
+Missouri:
+    id: 5
+    name: Missouri
+    code: MO
+    competitive: 2
+    votes_by_county: true
+    reg_deadline:
+
+Ohio:
+    id: 6
+    name: Ohio
+    code: OH
+    competitive: 1
+    votes_by_county: true
+    reg_deadline: 
+
+Wisconsin:
+    id: 6
+    name: Wisconsin
+    code: WI
+    competitive: 3
+    votes_by_county: false
+    reg_deadline: 

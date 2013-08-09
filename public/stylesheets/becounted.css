@@ -1,0 +1,296 @@
+/*
+ * Be Counted CSS, mikhuang@gmail.com Michael Huang
+ *                 Matt Togstad, Hardin Design and Development
+ * 
+ * App ID: #app10895039422_ // trunk
+ * App ID: #app7945748331_  // Nate's branch
+ * App ID: #app22809462423_ // Mike's branch
+ * Root: http://fjqqqyaa.joyent.us:3000/ //trunk, 3001 (Nate), 3002 (Mike)
+ */
+	/* Header */
+ #app10895039422_bc_header {
+     width: 760px;
+     height: 79px;
+     background-image: url(http://fjqqqyaa.joyent.us/images/header.jpg);
+ }
+ 
+ #app10895039422_bc_top_links {
+     height: 30px;
+     text-align: right;
+     float: right;
+     width: 275px;
+ }
+ 
+ #app10895039422_bc_top_links ul {
+     list-style-type: none;
+     margin: 0px;
+     padding: 0px;
+ }
+ 
+ #app10895039422_bc_top_links li {
+     float: left;
+     margin: 0px;
+     padding: 0px 10px;
+     line-height: 30px;
+     font-size: 1em;
+ }
+ 
+ #app10895039422_bc_top_links a {
+     color: #fff;
+     text-decoration: none;
+ }
+ 
+ #app10895039422_bc_top_links a:hover {
+     color: #fff;
+     text-decoration: underline;
+ }
+ 
+ #app10895039422_bc_main_links {
+     float: left;
+     margin: 7px 0px 0px 200px;
+ }
+ 
+ .bc_main_link {
+     float: left;
+ }
+	
+	#app10895039422_bc_walkthrough_step {
+		font-size: 1em;
+		float: left;
+		margin: 30px 0px 0px 200px;
+		color: #fff;
+	}
+ 
+ #app10895039422_bc_vote, #app10895039422_bc_recruit, #app10895039422_bc_friends {
+     height: 38px;
+ }
+ 
+ #app10895039422_bc_vote a, #app10895039422_bc_recruit a, #app10895039422_bc_friends a {
+     display: block;
+     width: 100%;
+     height: 100%;
+     text-indent: -1000em;
+     height: 38px;
+     background: url(http://fjqqqyaa.joyent.us/images/main_links.png);
+ }
+ 
+ #app10895039422_bc_vote a {
+     width: 118px;
+     background-position: 0 -38px;
+ }
+ 
+ #app10895039422_bc_vote a.on {
+     background-position: 0 0 !important;
+ }
+ 
+ #app10895039422_bc_vote a:hover {
+     background-position: 0 -76px;
+ }
+ 
+ #app10895039422_bc_recruit a {
+     width: 150px;
+     background-position: -118px -38px;
+ }
+ 
+ #app10895039422_bc_recruit a.on {
+     background-position: -118px 0 !important;
+ }
+ 
+ #app10895039422_bc_recruit a:hover {
+     background-position: -118px -76px;
+ }
+ 
+ #app10895039422_bc_friends a {
+     width: 160px;
+     background-position: -268px -38px;
+ }
+ 
+ #app10895039422_bc_friends a.on {
+     background-position: -268px 0 !important;
+ }
+ 
+ #app10895039422_bc_friends a:hover {
+     background-position: -268px -76px;
+ }
+	
+ /* All Pages */
+ #app10895039422_bc_container {
+     width: 760px;
+     font-family: "lucida grande", tahoma, verdana, arial, sans-serif;
+ }
+ 
+ #app10895039422_bc_container img {
+     border: none;
+ }
+ 
+ .bc_clearfix {
+     clear: both;
+ }
+	
+	.bc_preload {
+		width: 1px; 
+		height: 1px; 
+		margin-top: -1px; 
+		overflow: hidden; 
+	}
+	
+ .bc_hide {
+ 	width: 1px; 
+		height: 1px; 
+		background-color: white;
+	}
+
+	/* Profile page */
+		
+	#app10895039422_bc_profile {
+		float:left;
+		margin-top: 30px;
+	}
+	
+	#app10895039422_bc_profile_left {
+		float: left;
+		width: 300px;
+		margin: 0px 100px 0px 0px;
+	}
+	
+	#app10895039422_bc_profile_right {
+		float: right;
+		width: 300px;
+	}
+	
+	/********* BUTTONS FOR ALL PAGES ***********/
+ /* Grey Button! */
+ /*a.bc_button {
+     background: url(http://fjqqqyaa.joyent.us/images/grey_button.gif) left top;
+     text-decoration: none;
+     height: 29px;
+     display: inline-block;
+     float: left;
+		margin: .5em 0;
+     margin-right: 14px;
+ }*/
+ /* hack for ie6 */
+ * html a.bc_button {
+     display: inline;
+		margin: .5em 0;
+     padding-right: 14px;
+ }
+ 
+ /*a.bc_button span {
+     display: block;
+     background: url(http://fjqqqyaa.joyent.us/images/grey_button.gif) right top no-repeat;
+     font-size: 11px;
+     color: #666;
+     font-weight: bold;
+     padding: 7px 17px 9px;
+     margin-right: -12px;
+ }*/
+ 
+ a.bc_button {
+     background: url(http://fjqqqyaa.joyent.us/images/grey_button_r.gif) left top;
+     text-decoration: none;
+     height: 29px; 
+     float: left; 
+		padding-left: 12px;
+		margin: .5em .5em .5em 0;
+ }
+ 
+ a.bc_button span {
+     display: block;
+     background: url(http://fjqqqyaa.joyent.us/images/grey_button_r.gif) right top no-repeat;
+     font-size: 11px;
+     color: #666;
+     font-weight: bold; 
+		padding: 7px 14px 9px 6px;
+ }
+ 
+ a:hover.bc_button {
+     background: url(http://fjqqqyaa.joyent.us/images/grey_button_r.gif) left -29px;
+ }
+ 
+ a:hover.bc_button span {
+     background: url(http://fjqqqyaa.joyent.us/images/grey_button_r.gif) right -29px;
+     color: #fff;
+ }
+ 
+ a.bc_button_on {
+     background: url(http://fjqqqyaa.joyent.us/images/grey_button_r.gif) left 29px !important;
+ }
+ 
+ a.bc_button_on span {
+     background: url(http://fjqqqyaa.joyent.us/images/grey_button.gif) right 29px !important;
+     color: #807C7C !important;
+     cursor: default;
+ }
+	
+ a.yellow {
+     background: url(http://fjqqqyaa.joyent.us/images/yellow_button_r.gif) left top;
+ }
+ 
+ a.yellow span {
+     background: url(http://fjqqqyaa.joyent.us/images/yellow_button_r.gif) right top;
+     color: #444;
+ }
+ 
+ a:hover.yellow {
+     background: url(http://fjqqqyaa.joyent.us/images/yellow_button_r.gif) left -29px;
+ }
+ 
+ a:hover.yellow span {
+     background: url(http://fjqqqyaa.joyent.us/images/yellow_button_r.gif) right -29px;
+     color: #000;
+ }
+ a.green {
+     background: url(http://fjqqqyaa.joyent.us/images/green_button_r.gif) left top;
+ }
+ 
+ a.green span {
+     background: url(http://fjqqqyaa.joyent.us/images/green_button_r.gif) right top;
+     color: #fff;
+ }
+ 
+ a:hover.green {
+     background: url(http://fjqqqyaa.joyent.us/images/green_button_r.gif) left -29px;
+ }
+ 
+ a:hover.green span {
+     background: url(http://fjqqqyaa.joyent.us/images/green_button_r.gif) right -29px;
+     color: #fff;
+ }
+ /* Small Grey Button!! */
+ a.small {
+     background: url(http://fjqqqyaa.joyent.us/images/small_grey_button_r.gif) scroll left top;
+     text-decoration:none;
+		height:20px;
+		float: left; 
+		padding-left:9px;
+		margin: .5em .5em .5em 0;
+ }    
+ a.small span {
+     display: block;
+     background: url(http://fjqqqyaa.joyent.us/images/small_grey_button_r.gif) scroll right top;
+     font-size:9px;
+		color:#666;
+		font-weight:bold;
+		padding:3px 15px 4px 11px;
+ }
+ 
+ a:hover.small {
+     background: url(http://fjqqqyaa.joyent.us/images/small_grey_button_r.gif) scroll left -20px;
+ }
+ 
+ a:hover.small span {
+     background: url(http://fjqqqyaa.joyent.us/images/small_grey_button_r.gif) right -20px;
+     color: #fff;
+ }
+ 
+ .legible {
+     font-size: 120%;
+     line-height: 1.5;
+ }
+ 
+ table.subtle th {
+     color: #808080;
+     font-weight: normal;
+     text-align:left;
+ }

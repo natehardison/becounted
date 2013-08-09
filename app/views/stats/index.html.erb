@@ -1,0 +1,21 @@
+<%= render :partial => 'stats/stats_css' %>
+
+<h1>Stats Page</h1>
+<p>Getting out the vote takes enthusiasm and skill, but it also takes information.  By breaking down its usership by state,
+college, and dorm, BeCounted provides a clear picture of progress at every level of detail.  Information is completely 
+anonymous but extremely useful.  How will be counted?  See for yourself.</p>
+<h1>National Stats</h1>
+<br />
+<%= render(:partial => 'aggregate_table') %>
+
+<div class="grey_gradient" style="margin-top:10px">
+    <div >
+      <a href="<%= url_for(:action => 'college_states') %>" class="bc_button"><span>Breakdown by college state</span></a>
+    </div>
+
+    <div >
+      <a href="<%= url_for(:action => 'voter_states') %>" class="bc_button"><span>Breakdown by state of registration</span></a> 
+    </div>
+    
+    <br class="bc_clearfix">
+</div>

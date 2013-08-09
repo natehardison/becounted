@@ -1,0 +1,22 @@
+<%
+invite_text = <<-EOS
+<fb:name uid="#{@user.fb_uid}" linked="false" /> wants you to use BeCounted so you can get the voting information you need!
+BeCounted is a non-partisan app built by some college kids who just want more young adults to vote.
+Join today and get all the registration and absentee information you need to make your political voice heard!
+<fb:req-choice url="#{url_for(:controller => 'home', :canvas => true, :only_path => false)}" label="Be Counted!" />
+EOS
+%>
+
+<fb:tabs>
+	<% if params[:competitive] -%>
+		<fb:tab_item href="<%= url_for(:action => 'index') %>" title="All states" />
+		<fb:tab_item href="<%= url_for(:action => 'index', :competitive => '1') %>" title="Competitive states" selected="true"/>
+	<% else -%>
+		<fb:tab_item href="<%= url_for(:action => 'index') %>" title="All states" selected="true" />
+		<fb:tab_item href="<%= url_for(:action => 'index', :competitive => '1') %>" title="Competitive states"/>
+	<% end -%>
+</fb:tabs>
+<%= facebook_messages %>
+<fb:request-form type="BeCounted!" action="<%= url_for(:action => 'post_invite') %>" invite="true" content="<%= h(invite_text) %>" method="post">
+	<fb:multi-friend-selector exclude_ids="<%= @exclude_ids %>" max="20" actiontext="Get your friends to be counted!" showborder="true" rows="7" showborder="false" bypass="skip" />
+</fb:request-form>

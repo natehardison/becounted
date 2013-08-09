@@ -1,0 +1,8 @@
+<%= render :partial => 'stats/stats_css' %>
+
+<p>
+<a href="<%= url_for(:controller => 'stats') %>">Stats Home</a> 
+</p> 
+<%= content_tag(:h1, "College State Breakdown") %>
+<br />
+<%= render(:partial => 'breakdown_table') %>

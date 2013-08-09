@@ -1,0 +1,79 @@
+
+<table class="stats_table">
+  
+  <tr>
+    <th></th>
+    <th>Users</th>
+    <th></th>
+    <% StatsController::DEADLINE_BUCKETS.each() do |bucket| -%>
+    <th><%= bucket[:name] %></th>
+    <% end -%>
+    <th></th>
+    <th>Not Started</th>
+    <th>Registered</th>
+    <th>Confirmed Registration</th>
+    <th>Requested Absentee</th>
+    <th>Confirmed Absentee</th>
+    <th>Voted</th>
+  </tr>
+  
+  <% stat = @aggregate_stats[:total] -%>
+  <tr>
+    <td>Everybody</td>
+    <td><%= stat[:users] %></td>
+    <td></td>
+    <% StatsController::DEADLINE_BUCKETS.each() do |bucket| -%>
+    <td><%= stat[bucket[:code]] %></td>
+    <% end -%>
+    <td></td>
+    <td><%= stat[:not_started] %></td>
+    <td><%= stat[:registered] %></td>
+    <td><%= stat[:confirmed_registration] %></td>
+    <td><%= stat[:requested_absentee] %></td>
+    <td><%= stat[:confirmed_absentee] %></td>
+    <td><%= stat[:voted] %></td>
+  </tr>
+  
+  <% stat = @aggregate_stats[:absentee] -%>
+  <tr>
+    <td>Absentee</td>
+    <td><%= stat[:users] %></td>
+    <td></td>
+    <% StatsController::DEADLINE_BUCKETS.each() do |bucket| -%>
+    <td><%= stat[bucket[:code]] %></td>
+    <% end -%>
+    <td></td>
+    <td><%= stat[:not_started] %></td>
+    <td><%= stat[:registered] %></td>
+    <td><%= stat[:confirmed_registration] %></td>
+    <td><%= stat[:requested_absentee] %></td>
+    <td><%= stat[:confirmed_absentee] %></td>
+    <td><%= stat[:voted] %></td>
+  </tr>
+  
+  <% stat = @aggregate_stats[:in_person] -%>
+  <tr>
+    <td>In-Person</td>
+    <td><%= stat[:users] %></td>
+    <td></td>
+    <% StatsController::DEADLINE_BUCKETS.each() do |bucket| -%>
+    <td><%= stat[bucket[:code]] %></td>
+    <% end -%>
+    <td></td>
+    <td><%= stat[:not_started] %></td>
+    <td><%= stat[:registered] %></td>
+    <td><%= stat[:confirmed_registration] %></td>
+    <td><%= stat[:requested_absentee] %></td>
+    <td><%= stat[:confirmed_absentee] %></td>
+    <td><%= stat[:voted] %></td>
+  </tr>
+  
+  <% if params[:action] == 'index' -%>
+  <tr>
+    <td>Not Started</td>
+    <td><%= @aggregate_stats[:total][:users] - @aggregate_stats[:absentee][:users] - @aggregate_stats[:in_person][:users] %></td>
+    <td colspan="12"></td>
+  </tr>
+  <% end -%>
+  
+</table>

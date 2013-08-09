@@ -1,0 +1,182 @@
+<fb:js-string var="default_error">
+    <fb:error message="Error">
+        An error occurred while we were calculating your location.  It could
+		be that the calculation was taking too long, so Facebook timed out
+		the request. Try again, and if it doesn't work a second time, click
+		the link at the bottom of this pop-up.
+    </fb:error>
+</fb:js-string>
+<fb:js-string var="invalid_county">
+    <fb:error message="Invalid county selected">
+        You chose an invalid county.  If you think this is a mistake,
+		try refreshing the page to start this dialog again.  If that doesn't
+		work, send us a message.
+    </fb:error>
+</fb:js-string>
+<fb:js-string var="invalid_town">
+    <fb:error message="Invalid town selected">
+        You chose an invalid town.  If you think this is a mistake,
+		try refreshing the page to start this dialog again.  If that doesn't
+		work, send us a message.
+    </fb:error>
+</fb:js-string>
+<fb:js-string var="zip_code_format_error">
+    <fb:error message="Invalid zipcode format">
+        Please enter a 5-digit string
+    </fb:error>
+</fb:js-string>
+<fb:js-string var="zip_code_not_in_db">
+    <fb:error message="Invalid zipcode">
+        We can't find that ZIP code in our database.  Please try again.
+    </fb:error>
+</fb:js-string>
+<fb:js-string var="zip_code_out_of_state">
+    <fb:error message="Invalid zipcode">
+        The ZIP code you entered is not in your state.  Please enter 
+		another ZIP code, or change your voting state.
+    </fb:error>
+</fb:js-string>
+<fb:js-string var="location_dialog">
+    <div id="errors" align="center"></div>
+	<br />
+    <div id="location_dialog_content" align="center">
+    	<p align="center" style="font-size: 12px; font-weight: bold;">
+			Enter the ZIP code of the place you're voting.
+		</p>
+		<p>
+			Though you've entered your state already, we need your ZIP code to get you the
+			address and phone number of your <em>local</em> elections office. 
+		</p>
+    	<form>
+    		<label>ZIP code:</label>
+       		<input id="zip_code" class="inputtext" type="text" name="zip_code" style="width: 50px" maxlength="5" />
+    	</form>
+    </div>
+	<div id="ajax_loader" align="center" style="display: none">
+		<h3 align="center">Loading...</h3>
+    	<%= image_tag("ajax-loader.gif", :align => "center") %>
+	</div>
+	<p>Having problems with this? Click <%= link_to("here", :controller => 'location', :action => 'index') %>.</p>
+</fb:js-string>
+
+<script type="text/javascript">
+    <!--
+	function LocationFinder(on_complete) {
+		this.ajax_in_progress = false;
+		this.ajax_url = "<%= url_for(:controller => :location, :only_path => false, :canvas => false) %>";
+		this.dialog = new Dialog();
+		
+		// function to execute on complete...probably just
+		// an ajax request to a specific url for info.
+		this.on_complete = on_complete;
+		this.start_finder();
+	}
+	
+	LocationFinder.prototype.ajax_icon = function() {
+		return $("ajax_loader");
+	}
+	
+	LocationFinder.prototype.content = function(){
+		return $("location_dialog_content");
+	}
+	
+	LocationFinder.prototype.errors = function(){
+		return $("errors");
+	}
+	
+	LocationFinder.prototype.handle_ajax_response = function(ajax_response) {
+		this.ajax_in_progress = false;
+		if (ajax_response.complete) {
+			this.show_location(ajax_response);
+		} else if (ajax_response.error) {
+			switch (ajax_response.error) {
+				case 'invalid_county': this.errors().show(invalid_county); break;
+				case 'invalid_town': this.errors().show(invalid_town); break;
+				case 'zip_code_not_in_db': this.errors().show(zip_code_not_in_db); break;
+				case 'zip_code_out_of_state': this.errors().show(zip_code_out_of_state); break;
+				default: this.errors().show(default_error);
+			}
+			this.ajax_icon().hide();
+			this.content().show();
+		} else {
+			this.ajax_icon().hide();
+			this.errors().hide();
+			this.content().show(ajax_response.fbml_content);
+			switch (ajax_response.onconfirm) {
+				case "set_county": this.dialog.onconfirm = this.set_county.bind(this); break;
+				case "set_town": this.dialog.onconfirm = this.set_town.bind(this); break;
+			}
+		}	
+	}
+	
+	LocationFinder.prototype.make_ajax_request = function(url, params) {
+		if(this.ajax_in_progress) {
+			return;
+		}
+		this.ajax_in_progress = true;	
+		var options = {};
+		options["ondone"] = this.handle_ajax_response.bind(this);
+		options["onerror"] = function() {
+			this.ajax_in_progress = false;
+			this.errors().show(default_error);
+		}
+		options["params"] = params;
+		this.errors().hide();
+		this.content().hide();
+		this.ajax_icon().show();
+		ajax_request(url, options);
+	}
+	
+	LocationFinder.prototype.set_county = function() {
+		var params = {};
+		params["county"] = $("county").getValue();
+		params["zip_code"] = $("zip_code").getValue();
+		var url = this.ajax_url + "/set_county";
+		this.make_ajax_request(url, params);
+		return false;
+	}
+	
+	LocationFinder.prototype.set_town = function() {
+		var params = {};
+		params["county"] = $("county").getValue();
+		params["town"] = $("town").getValue();
+		params["zip_code"] = $("zip_code").getValue();
+		var url = this.ajax_url + "/set_town";
+		this.make_ajax_request(url, params);
+		return false;
+	}
+	
+	LocationFinder.prototype.set_zip_code = function() {	
+		var zipcode = $("zip_code").getValue();
+		if (!this.validate_zip_code(zipcode)) {
+			this.errors().show(zip_code_format_error);
+			return false;
+		}
+		var url = this.ajax_url + "/set_zip_code";
+		var params = {"zip_code" : zipcode};
+		this.make_ajax_request(url, params);
+		return false;
+	}
+	
+	LocationFinder.prototype.show_location = function(ajax_response) {
+		this.ajax_in_progress = false;
+		this.dialog.showChoice("Your local elections office", ajax_response.fbml_content, "Okay, looks good", "Let's try again");
+		this.dialog.onconfirm = function() { return true; };
+		this.dialog.oncancel = this.start_finder.bind(this);
+		this.on_complete();
+	}
+	
+	LocationFinder.prototype.start_finder = function() {
+		this.dialog.onconfirm = this.set_zip_code.bind(this);
+		this.dialog.showMessage("Find your local elections office!", location_dialog);
+		return false;
+	}
+	
+	LocationFinder.prototype.validate_zip_code = function(zipcode){
+        if (zipcode.length < 5 || zipcode.match(new RegExp("[^0-9]")) != null) {
+            return false;
+        }
+        return true;
+    }
+    //-->
+</script>

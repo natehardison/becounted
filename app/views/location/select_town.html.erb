@@ -1,0 +1,8 @@
+<h3>In your state, voting is done by town rather than by county.  Please select the town you wish to vote in.</h3>
+<form id="town_form" action="<%= url_for(:controller => 'location', :action => 'set_town') %>" method="post">
+   	<label>Your town:</label>
+	<select id="town" name="town"><%= options_for_select(@towns) %></select>
+	<input type="hidden" id="county" name="county" value="<%= h(params[:county]) %>" />
+	<input type="hidden" id="zip_code" name="zip_code" value="<%= h(params[:zip_code]) %>" />
+	<a href="#" class="bc_button" onclick="$('town_form').submit();"><span>Go!</span></a>
+</form>

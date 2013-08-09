@@ -1,0 +1,13 @@
+<p><%= @user.registration_info[:address].to_html %></p>
+<br />
+<p><%= @user.home_state.name %></p>
+<br />
+<p><%= @user.college.name %></p>
+<br />
+<p><%= @user.voting_state.name %></p>
+<br />
+<p><%= @user.absentee_info[:address].to_html %></p>
+<br />
+<% @user.achievements.each do |achievement| -%>
+<p><%= achievement.action.minifeed_suffix(@user) %></p>
+<% end -%>

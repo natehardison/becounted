@@ -1,0 +1,285 @@
+<%= render :partial => 'walkthrough_css' %>
+<%#= stylesheet_link_tag ('walkthrough.css') %>
+<script>
+	function build_select_box(container, data) {
+		for (var i = 0; i < data.length; ++i) {
+            var option_name = data[i][0];
+            var option_id = data[i][1];
+            var option = document.createElement('option');
+            option.setValue(option_id);
+            option.setTextValue(option_name);
+            container.appendChild(option);
+        }
+	}
+	
+    function remove_all_select_options(selector){
+        var options = selector.getElementsByTagName('option');
+        for (var i = options.length - 1; i >= 0; --i) {
+            selector.removeChild(options[i]);
+        }
+    }
+    
+    function college_onchange(){
+		var dorm_chooser = $("dorm_chooser");
+        var dorm_selector = $('dorm_selector');
+        var college_id = $('college_selector').getValue();
+		if(college_id == "") {
+			dorm_chooser.animate_hide(300);
+			var buttons = $("where_registered_buttons");
+			if (buttons.visible()) {
+				buttons.animate_hide(300);
+			}
+		}
+        remove_all_select_options(dorm_selector);
+        var loading_option = document.createElement('option');
+        dorm_selector.appendChild(loading_option);
+        loading_option.setValue('');
+        loading_option.setTextValue('Loading dorm list...');
+        if(dorm_chooser.hidden() && college_id != "") {
+			dorm_chooser.animate_show();
+		}
+        var url = "<%= url_for(:action => 'ajax_dorm_list', :only_path => false, :canvas => false) %>";
+        var options = {};
+        options["ondone"] = college_onchange_ajax_ondone;
+        options["params"] = {
+            "college_id": college_id
+        };
+        ajax_request(url, options);
+    }
+    
+    function college_onchange_ajax_ondone(response){
+		var dorm_chooser = $("dorm_chooser");
+        var dorm_selector = $('dorm_selector');
+        var dorms = response['dorms'];
+		if(dorms.length == 0) {
+			if (dorm_chooser.visible()) {
+				dorm_chooser.animate_hide(300);
+			}
+			return;
+		}
+		remove_all_select_options(dorm_selector);
+        build_select_box(dorm_selector, dorms);
+    }
+
+	function college_dialog_onconfirm() {
+		var ajax_selector = $("ajax_college_selector");
+		if(ajax_selector.hidden()) {
+			return;
+		}
+		var college_selector = $("college_selector");
+		var selected_index = ajax_selector.getSelectedIndex();
+		var selected_option = ajax_selector.getChildNodes()[selected_index];
+		var college_options = college_selector.getChildNodes();
+		for(var i = 0; i < college_options.length - 2; i++) {
+			if(selected_option.getValue() == college_options[i].getValue()) {
+				return;
+			}
+		}
+		if(college_options.length == 1) { //only the "Not in school" option is there
+			var option = document.createElement('option');
+            option.setValue("");
+            option.setTextValue("--------------------");
+			option.setDisabled(true);
+			college_selector.insertBefore(option, college_selector.getFirstChild());
+		}
+		college_selector.insertBefore(selected_option, college_selector.getFirstChild());
+		college_selector.setSelectedIndex(0);
+		college_onchange();
+	}
+	
+	function load_college_dialog(response) {
+		var selector = $("ajax_college_selector");
+		build_select_box(selector, response["colleges"]);
+		$("ajax_college_loader").hide();
+		selector.show();
+	}
+
+	function show_college_dialog() {
+		var title = "Select your college from the list below:"
+		var dialog = new Dialog().showChoice(title, ajax_college_select);
+		dialog.setStyle("width", "550px");
+		dialog.onconfirm = college_dialog_onconfirm;
+		var options = {};
+		options["ondone"] = load_college_dialog;
+		var url = "<%= url_for(:action => 'ajax_college_list', :only_path => false, :canvas => false) %>";
+		ajax_request(url, options);
+	}
+
+	function show_unsure_dialog(){
+		var title = "Unsure if you're registered?"
+        var unsure_dialog = new Dialog().showChoice(title, unsure_dialog_content, "Check using VotePoke!");
+		unsure_dialog.onconfirm = function() {
+			unsure_dialog.setStyle("width", "850px").setStyle("height", "600px");
+			unsure_dialog.onconfirm = function() { return true; } // have to override this fn
+			unsure_dialog.showMessage("Unsure if you're registered?", vote_poke_iframe, "Done");
+			return false; // don't want dialog to close!
+		}
+    }
+    
+    function toggle_where_registered_buttons(){
+        var buttons = $("where_registered_buttons");
+        if (buttons.hidden()) {
+            buttons.animate_show();
+        } else {
+			buttons.animate_hide();
+		}
+    }
+    
+	function submit_form(register_status) {
+		var hidden_input = $("register_status");
+		if(register_status == "at_home") {
+			hidden_input.setValue($("home_selector").getValue());
+		} else if(register_status == "at_school") {
+			hidden_input.setValue($("college_selector").getValue());
+		} else if(register_status == "not_registered") {
+			hidden_input.setValue("not_registered");
+		}
+		$("bc_form").submit();
+	}
+	
+	function button_handler(button) {
+		//button.toggleClassName("bc_button_on");
+		var where_register_buttons = $("where_registered_buttons");
+		switch(button.getId()) {
+			case "yes_button":
+				var college = $("college_selector");
+				if((college.getValue() == "") || (college.getValue() == null)) {
+					submit_form("at_home");
+				}
+				else if(where_register_buttons.hidden()) {
+					where_register_buttons.animate_show();
+				} else {
+					where_register_buttons.animate_hide(300);
+				}
+				break;
+			case "no_button":
+				/*if(where_register_buttons.hidden()) {
+					where_register_buttons.animate_hide(300);
+				}
+				$("yes_button").toggleClassName("bc_button_on");*/
+				submit_form("not_registered");
+				break;
+			case "unsure_button":
+				/*if(where_register_buttons.hidden()) {
+					where_register_buttons.animate_hide(300);
+				}
+				$("yes_button").toggleClassName("bc_button_on");
+				button.toggleClassName("bc_button_on");*/
+				show_unsure_dialog();
+				break;
+			case "home_button":
+				submit_form("at_home");
+				break
+			case "school_button":
+				submit_form("at_school");
+				break;
+		}
+		
+	}
+	
+</script>
+<fb:js-string var="vote_poke_iframe">
+	<fb:iframe src="https://www.votepoke.org/index.html" width="800" height="600" />
+</fb:js-string>
+<fb:js-string var="ajax_college_select">
+	<select id="ajax_college_selector" style="display: none;"></select>
+	<div id="ajax_college_loader" align="center">
+		<h3 align="center">Loading...</h3>
+		<%= image_tag("ajax-loader.gif", :align => "center") %>
+	</div>
+</fb:js-string>
+<fb:js-string var="unsure_dialog_content">
+	<div id="unsure_content" align="center">
+		<p style="text-align: center; font-size: 12px;">
+			If you don't know whether you're registered or not, you can check online using <a href="http://votepoke.org">VotePoke</a> or
+			contact your local elections official.
+		</p>
+	</div>
+</fb:js-string>
+<div class="bc_recruit_container">
+    <div id="bc_recruit_message">
+        <span style="font-size:13px; color:#999; font-weight:bold">Welcome to BeCounted!</span>
+        <!-- span style="font-size: 12px;">Just a few questions and you'll be all set</span -->
+    </div>
+    <div id="bc_recruit_intro">
+        <div class="bc_recruit_content_box">
+            <p style="font-size: 17px;">BeCounted has one goal&mdash;to help you vote.</p>
+            <p>The application provides:</p>
+            <ul>
+                <li>An outline of your voting process</li>
+                <li>Contact info for your election official</li>
+                <li>Registration and State Absentee Request Forms</li>
+                <li>The ability to recruit your friends to BeCounted on the 'Recruit' page</li>
+                <li>See your friends' voting progress on the 'Friends' page</li>
+            </ul>
+        </div>
+        <div class="bc_recruit_content_box">
+            <p>BeCounted is in beta so expect some improvements in the coming weeks.  Contact us at
+            <a href="mailto:BeCounted2008@gmail.com">BeCounted2008@gmail.com</a> if you run into problems. </p>
+            <p>No state currently allows online voting.  BeCounted provides you with the information you'll
+            need to vote but cannot allow you to vote online.  Forms and ballots will still need to be mailed 
+            to the appropriate election officials.</p>
+            <p>Let's get started!</p>
+        </div>
+    </div>
+    <div class="bc_clearfix"></div>
+    <div class="bc_recruit_message">
+        <span>Where can you vote? </span>
+        <span style="font-size: 12px;">Select your <%= "school and home" unless @colleges.nil? %> state</span>
+    </div>
+    <div id="bc_recruit_drop_downs">
+        <form id="bc_form" action="<%= url_for(:controller => 'walkthrough', :action => 'select_voting_method') %>" method="post">
+			<div class="bc_recruit_box">
+                <div class="bc_recruit_drop_title">
+                    School
+                </div>
+                <div class="bc_recruit_drop_down">
+                    <select id="college_selector" name="college" onchange="college_onchange();" size="3">
+                    	<% options = "<option value="">Not in college</option>" -%>
+						<% unless @colleges.nil? -%>
+							<% options = "<option disabled='disabled'>&mdash;&mdash;&mdash;</option>" + options-%>
+							<% options = options_for_select(@colleges, @user_college) + options-%>
+						<% end -%>
+						<%= options %>
+                    </select>
+                </div>
+                <a href="#" onclick="show_college_dialog(); return false;">Is your school not in this list?</a> 
+                <div id="dorm_chooser" style="<%= 'display: none;' if @dorms.empty? %>">
+                    <div class="bc_recruit_drop_title" style="font-size: 12px">
+                        Dorm
+                    </div>
+                    <div class="bc_recruit_drop_down">
+                        <select id="dorm_selector" name="dorm">
+                        	<!-- TODO: Make this select "Other" first -->
+                            <%= options_for_select(@dorms, nil) %>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="bc_recruit_box">
+                <div class="bc_recruit_drop_title">
+                    Home state
+                </div>
+                <div class="bc_recruit_drop_down">
+                    <select id="home_selector" name="home_state">
+                        <%= options_for_select(@states.sort, @user_state) %>
+                    </select>
+                </div>
+            </div>
+			<input type="hidden" id="register_status" name="register_status" />
+        </form>
+    </div>
+    <div class="bc_clearfix"></div>
+    <div class="bc_recruit_message">
+        Are you registered to vote?
+    </div>
+    <div class="bc_recruit_box" style="width:100%;">
+        <a href="#" id="yes_button" class="bc_button" onclick="button_handler(this); return false;"><span>Yes</span></a>
+		<a href="#" id="no_button" class="bc_button" onclick="button_handler(this); return false;"><span>No</span></a>
+		<a href="#" id="unsure_button" class="bc_button" onclick="button_handler(this); return false;"><span>Unsure</span></a>
+    </div>
+    <div id="where_registered_buttons" class="bc_recruit_box" style="width:100%; display:none;">
+        <a href="#" id="school_button" class="bc_button" onclick="button_handler(this); return false;"><span>I'm registered at school</span></a>
+		<a href="#" id="home_button" class="bc_button" onclick="button_handler(this); return false;"><span>I'm registered at home</span></a>
+    </div>
+</div>

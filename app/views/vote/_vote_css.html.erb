@@ -1,0 +1,155 @@
+<style type="text/css">
+    /* By Matt Togstad at Hardin Design and Development */
+    /* Vote Page */
+    #bc_vote_left_bar {
+        float: left;
+        width: 250px;
+        background: #F8F6F9 url("<%= image_path('vote_gradient.jpg') %>") top repeat-x; 
+    }
+    
+    #bc_vote_right_bar {
+        background: #F8F6F9 url("<%= image_path('vote_gradient.jpg') %>") top repeat-x; 
+        width: 495px;
+        float: left;
+        margin-left: 15px;
+    }
+    
+    #bc_change_box {
+        width: 495px;
+        height: 100px;
+    }
+    
+    .bc_message_box {
+        /*width: 495px;
+        height: 27px;*/
+        padding-top:4px;
+    }
+    
+    .bc_icon {
+        float: left;
+        width: 25px;
+        /*height: 27px;*/
+    }
+    
+    .bc_message {
+        width: 468px;
+        /*height: 26px;*/
+        float: left;
+        border-bottom: #d8dfea solid 1px;
+        font-size: 10px;
+        /*line-height: 25px;*/
+        padding-bottom: 6px;
+    }
+    
+    .bc_points {
+        width: 10%;
+        float: right;
+        color: #6ab768;
+        /*line-height: 26px;*/
+        font-weight: bold;
+        font-size: .9em;
+        text-align: right;
+    }
+    
+    .bc_message_main_text {
+        width: 90%;
+        float: left;
+    }
+    
+    .bc_message_main_text .voting_info {
+        color: #888; 
+        font-size: 9px;
+        white-space: nowrap;
+    }
+    
+    .bc_left_active {
+        width: 212px;
+		padding: 0 15px 10px 23px;
+        /*min-height: 200px;*/
+        background: #78CC76 top repeat-x url("<%= image_path('green_repeater.jpg') %>");
+    }
+    
+    .bc_left_active p {
+        margin: 1em 0;
+    }
+    
+	.bc_left_active a.right {
+		float:right;
+	}
+	
+    .bc_left_old {
+        width: 250px;
+        height: 138px;
+        background: repeat-x url("<%= image_path('vote_gradient.jpg') %>");
+    }
+    
+    .bc_step {
+        color: #fff;
+        padding: 6px 0 0 0;
+		margin-left: -13px;
+		font-weight: bold;
+        float: left;
+    }
+    
+    .bc_step_off {
+        color: #aaa;
+        padding: 6px 0px 0px 10px;
+        float: left;
+    }
+    
+    .bc_due {
+        color: #ff0;
+        padding: 8px 0px 0px 5px;
+        font-size: 10px;
+        float: left;
+    }
+    
+    .bc_step_explanation {
+        font-size: 11px; 
+    }
+    
+    .bc_step_explanation_off {
+        font-size: 10px;
+        margin: 10px 15px 0px 30px;
+    }
+    
+    .bc_small_green_box {
+        width: 250px;
+        height: 38px;
+        background: url("<%= image_path('littlegreen.png') %>") repeat-x;
+        line-height: 38px;
+    }
+    
+    .bc_small_green_box a {
+        line-height: 38px;
+    }
+    
+    .bc_left_step {
+        padding: 5px 5px 5px 9px;
+        font-size: 12px;
+        width: 250px;
+    }
+    
+    .bc_step_title {
+        font-weight: bold;
+    }
+    
+    .bc_step_description {
+        padding-left: 5px;
+    }
+    
+    .bc_vote_summary {
+        width: 250px;
+        background: url("<%= image_path('recruit_gradient.jpg') %>") repeat-x;
+    }
+    
+    .bc_vote_summary_content {
+        padding: 7px;
+        font-size: 12px;
+    }
+    
+    .bc_vote_summary_content a, .bc_step_explanation_off a {
+        text-decoration: none;
+        color: #2740b3;
+    }
+</style>

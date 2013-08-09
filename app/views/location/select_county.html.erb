@@ -1,0 +1,7 @@
+<h3>The ZIP code "<%= h(@zip_code.zip_code) %>" falls in multiple counties.  Please select your county of residence.</h3>
+<form id="county_form" action="<%= url_for(:controller => 'location', :action => 'set_county') %>" method="post">
+	<label>Your county:</label>
+	<select id="county" name="county"><%= options_for_select(@counties) %></select>
+	<input type="hidden" id="zip_code" name="zip_code" value="<%= h(@zip_code.id) %>" />
+	<a href="#" class="bc_button" onclick="$('county_form').submit();"><span>Go!</span></a>
+</form>

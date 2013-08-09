@@ -1,0 +1,41 @@
+<%= render :partial => "layouts/becounted_css" %>
+<%= render :partial => "layouts/becounted_js" %>
+<%#= stylesheet_link_tag ('becounted.css') %>
+<div id="bc_container">
+	<div id="bc_header">
+		<div id="bc_top_links">
+			<ul>
+				<li><a href="<%= url_for(:controller => 'home', :action => 'privacy') %>">Privacy</a></li>
+				<li><a href="<%= url_for(:controller => 'home', :action => 'about') %>">About</a></li>
+				<!-- just for testing purposes, move back to contact -->
+				<!--<li><a href="<%= url_for(:controller => 'home', :action => 'start_over') %>">Start Over</a></li>-->
+				<!--<li><a href="<%= url_for(:controller => 'home', :action => 'help') %>">Help</a></li>-->
+				<li><a href="<%= url_for(:controller => 'stats') %>">Stats</a></li>
+			</ul>
+		</div>
+		<div class="bc_clearfix"></div>
+		<div id="bc_main_links" style="<%= 'display: none' if controller.controller_name == 'walkthrough' %>">
+			<div id="bc_vote" class="bc_main_link"><a href="<%= url_for(:controller => :vote) %>" class="<%= 'on' if controller.controller_name =~ /vote|absentee/ %>">Vote</a></div>
+			<div id="bc_recruit" class="bc_main_link"><a href="<%= url_for(:controller => :recruit) %>" class="<%= 'on' if controller.controller_name == 'recruit' %>">Recruit</a></div>
+			<div id="bc_friends" class="bc_main_link"><a href="<%= url_for(:controller => :friends) %>" class="<%= 'on' if controller.controller_name == 'friends' %>">Friends</a></div>
+		</div>
+		<div id="bc_walkthrough_step" style="<%= 'display: none' unless controller.controller_name == 'walkthrough' %>">
+			<% if controller.action_name == 'select_home_state_and_college' -%>
+				Step 1 of 2
+			<% else -%>
+				Step 2 of 2
+			<% end -%>
+		</div>
+	</div>
+	<br />
+<%= yield %>
+	<div id="no_script">
+		<fb:error>
+			<fb:message>
+				If you can see this, you don't have JavaScript enabled.  Please go to the
+				"Preferences" pane in your browser to enable JavaScript, and refresh this
+				page.
+			</fb:message>		
+		</fb:error>
+	</div>
+</div>

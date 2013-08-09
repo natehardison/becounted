@@ -1,0 +1,16 @@
+<!-- IVARS: none -->
+<script type="text/javascript">
+	function show_vote_poke_dialog() {
+		var dialog = new Dialog().showMessage("Confirm your registration", vote_poke_iframe);
+		dialog.setStyle("width", "850px").setStyle("height", "600px");
+	}
+</script>
+<fb:js-string var="vote_poke_iframe">
+	<fb:iframe src="https://www.votepoke.org/index.html" width="800" height="600" />
+</fb:js-string>
+
+<p class="bc_clearfix">Check your registration online. Keep in mind that it takes a while for your county elections office to process your registration.</p>
+<a href="#" class="bc_button" onclick="show_vote_poke_dialog(); return false;"><span>Check registration online</span></a>
+<!--<p>Alternately, <a href="#">call your elections office</a>.</p>-->
+<a href="#" class="bc_button yellow right" onclick="next_status(); return false;"><span>Done</span></a>
+<br class="bc_clearfix" />

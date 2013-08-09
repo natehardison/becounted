@@ -1,0 +1,7 @@
+<h3>In your state, voting is done by town rather than by county.  Please select the town you wish to vote in.</h3>
+<form>
+   	<label>Your town:</label>
+	<select id="town"><%= options_for_select(@towns) %></select>
+	<input type="hidden" id="county" value="<%= h(params[:county]) %>" />
+	<input type="hidden" id="zip_code" value="<%= h(params[:zip_code]) %>" />
+</form>

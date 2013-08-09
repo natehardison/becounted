@@ -1,0 +1,384 @@
+<script>
+just_ready_users = false;
+rows_data = [];
+<% @my_friends_with_app.each_with_index do |friend, index| -%>
+rows_data.push(["<%= friend.fb_uid %>", ({"name":"<%= @friends_with_app.find{|x| x.uid == friend.fb_uid}.name %>", "next_end_deadline": <%= friend.next_end_deadline.nil? ? -1 : Date.today - friend.next_end_deadline %>, "progress":<%=friend.progress_sorted_index%>, "points":<%= -friend.points.to_i %>})]);
+<% end -%>
+function show_ready_users() {
+  just_ready_users = true;
+  var user_table = document.getElementById('user_table');
+  var trs = user_table.getElementsByTagName('div');
+  for (var i = 0; i < trs.length; i++) {
+    var tr = trs[i];
+    if (tr.hasClassName('ready')) {
+      tr.setStyle('display', 'block');
+    } else if (tr.hasClassName('all')) {
+      tr.setStyle('display', 'none');
+    }
+  }
+
+  var friend_list_sizes = document.getElementById('friend_list_sizes');
+  var friend_list_sizes_spans = friend_list_sizes.getElementsByTagName('span');
+  for (var i = 0; i < friend_list_sizes_spans.length; i++) {
+    if (friend_list_sizes_spans[i].hasClassName('n_users_ready')) {
+      friend_list_sizes_spans[i].setStyle('display', 'inline');
+    } else if (friend_list_sizes_spans[i].hasClassName('n_users_everyone')) {
+      friend_list_sizes_spans[i].setStyle('display', 'none');
+    }
+  }
+  
+  document.getElementById('show_ready_users_div').removeClassName('button_box_not_highlighted');
+  document.getElementById('show_ready_users_div').addClassName('button_box_highlighted');
+  document.getElementById('show_all_users_div').removeClassName('button_box_highlighted');
+  document.getElementById('show_all_users_div').addClassName('button_box_not_highlighted');
+}
+
+function show_all_users() {
+  just_ready_users = false;
+  var user_table = document.getElementById('user_table');
+  var trs = user_table.getElementsByTagName('div');
+  for (var i = 0; i < trs.length; i++) {
+    var tr = trs[i];
+    if (tr.hasClassName('all')) {
+      tr.setStyle('display', 'block');
+    }
+  }
+  var friend_list_sizes = document.getElementById('friend_list_sizes');
+  var friend_list_sizes_spans = friend_list_sizes.getElementsByTagName('span');
+  for (var i = 0; i < friend_list_sizes_spans.length; i++) {
+    if (friend_list_sizes_spans[i].hasClassName('n_users_everyone')) {
+      friend_list_sizes_spans[i].setStyle('display', 'inline');
+    } else if (friend_list_sizes_spans[i].hasClassName('n_users_ready')) {
+      friend_list_sizes_spans[i].setStyle('display', 'none');
+    }
+  }
+
+  document.getElementById('show_all_users_div').removeClassName('button_box_not_highlighted');
+  document.getElementById('show_all_users_div').addClassName('button_box_highlighted');
+  document.getElementById('show_ready_users_div').removeClassName('button_box_highlighted');
+  document.getElementById('show_ready_users_div').addClassName('button_box_not_highlighted');
+}
+
+function sort_table(column_name) {
+  document.getElementById('table_head_name').removeClassName('TableHeadBlue');
+  document.getElementById('table_head_name').addClassName('TableHead');
+  document.getElementById('table_head_progress').removeClassName('TableHeadBlue');
+  document.getElementById('table_head_progress').addClassName('TableHead');
+  document.getElementById('table_head_next_end_deadline').removeClassName('TableHeadBlue');
+  document.getElementById('table_head_next_end_deadline').addClassName('TableHead');
+  document.getElementById('table_head_points').removeClassName('TableHeadBlue');
+  document.getElementById('table_head_points').addClassName('TableHead');
+
+  document.getElementById('table_head_'+column_name).removeClassName('TableHead');
+  document.getElementById('table_head_'+column_name).addClassName('TableHeadBlue');
+
+  var user_table = document.getElementById('user_table');
+  var cmp = function(x, y) {
+    x = x[1][column_name];
+    y = y[1][column_name];
+    if (x < y) return -1;
+    else if (x == y) return 0;
+    else return 1;
+  };
+  rows_data = rows_data.sort(cmp);
+  for (var i = 0; i < rows_data.length; i++) {
+    row_data = rows_data[i];
+    var row = document.getElementById('user_row_' + row_data[0]);
+    user_table.appendChild(row);
+  }
+}
+
+function list_contains_row(list, tr) {
+  for (var i = 0; i < list.length; i++) {
+    if ('user_row_' + list[i] == tr.getId()) return true;
+  }
+  return false;
+}
+
+friend_list_users = <%#= @friend_lists.map{|friend_list| friend_list[1].map{|x| x.fb_uid}}.to_json %>;
+function select_friend_list(friend_list_index) {
+  var list_users = <%= @my_friends_with_app.map{|x| x.fb_uid}.to_json %>;
+  if (friend_list_index != "") {
+    list_users = friend_list_users[parseInt(friend_list_index, 10)];
+  }
+  var user_table = document.getElementById('user_table');
+  var trs = user_table.getElementsByTagName('div');
+
+  for (var i = 0; i < trs.length; i++) {
+    var tr = trs[i];
+    if (tr.hasClassName('all')) {
+      if ((!tr.hasClassName('ready') && just_ready_users) || !list_contains_row(list_users, tr)) {
+        tr.setStyle('display', 'none');
+      } else {
+        tr.setStyle('display', 'block');
+      }
+    }
+  }
+  
+//  <% #@friend_lists.each_with_index() do |friend_list, index| -%>
+//  	document.getElementById('friend_list_select_<%=index%>').removeClassName('SideSelected');
+//  	document.getElementById('friend_list_select_<%=index%>').addClassName('SideNotSelected');
+//  	document.getElementById('friend_list_size_<%=index%>').setStyle('display', 'none');
+//  <% #end -%>
+  document.getElementById('friend_list_select_').removeClassName('SideSelected');
+  document.getElementById('friend_list_select_').addClassName('SideNotSelected');
+  document.getElementById('friend_list_size_').setStyle('display', 'none');
+
+  document.getElementById('friend_list_select_' + friend_list_index).removeClassName('SideNotSelected');
+  document.getElementById('friend_list_select_' + friend_list_index).addClassName('SideSelected');
+  document.getElementById('friend_list_size_' + friend_list_index).setStyle('display', 'block');
+}
+</script>
+
+<style>
+/* Friends Page  */
+.TableHead
+{
+float:left;
+font-size:10px;
+font-weight:bold;
+line-height:20px;
+height:20px;
+background-image:url("<%= image_path('greyrepeater.jpg') %>");
+background-repeat:repeat-x;
+color:#a2a2a2;
+border-left:solid 1px #a2a2a2;
+cursor:pointer;
+}
+.TableHead a 
+{
+color:#a2a2a2;
+}
+.TableHeadBlue
+{
+float:left;
+font-size:10px;
+font-weight:bold;
+line-height:20px;
+height:20px;
+background: #6277A2 url("<%= image_path('bluerepeater.jpg') %>") repeat-x;
+background-repeat:repeat-x;
+color:#FFFFFF;
+border-left:solid 1px #2f477a;
+}
+.TableHeadBlue a 
+{
+color:#FFFFFF;
+}
+.Name
+{
+float:left;
+min-height:64px;
+width:200px;
+}
+.NextStep
+{
+float:left;
+height:64px;
+width:180px;
+}
+.DaysRemaining
+{
+float:left;
+height:64px;
+width:105px;
+}
+.Status
+{
+float:left;
+height:64px;
+width:70px;
+}
+.Points
+{
+float:left;
+height:64px;
+width:105px;
+}
+.InfoRow
+{
+font-size:12px;
+height:64px;
+width:595px;
+border-bottom:solid 1px #ccc;
+}
+.SideSelected
+{
+height:20px;
+width:160px;
+background-color:#6d84b4;
+border-top:solid 1px #3b5998;
+border-bottom:solid 1px #3b5998;
+font-size:10px;
+font-weight:bold;
+line-height:20px;
+color:#FFFFFF;
+}
+.SideNotSelected
+{
+height:20px;
+width:160px;
+font-size:10px;
+font-weight:bold;
+line-height:20px;
+color:#6d84b4;
+cursor:pointer;
+}
+
+div.button_box_highlighted {
+white-space: nowrap; 
+}
+div.button_box_highlighted div.button_box_left {
+background: url('<%= image_path('button_box_left.png') %>') left;
+width: 7px;
+height: 20px;
+float: left;
+}
+div.button_box_highlighted div.button_box_right {
+background: url('<%= image_path('button_box_right.png') %>') right;
+width: 7px;
+height: 20px;
+float: right;
+}
+div.button_box_highlighted div.button_box_middle {
+white-space: nowrap;
+background-image: url('<%= image_path('button_box_middle.png') %>');
+background-repeat: repeat-x;
+height: 20px;
+padding: 3px 3px 3px 3px;
+padding-right: 10px;
+font-size: 11px;
+font-weight: bold;
+color: #fff; 
+}
+
+div.button_box_not_highlighted {
+white-space: nowrap;
+}
+div.button_box_not_highlighted div.button_box_left {
+background: none;
+width: 7px;
+height: 20px;
+float: left;
+}
+div.button_box_not_highlighted div.button_box_right {
+background: none;
+width: 7px;
+height: 20px;
+float: right;
+}
+div.button_box_not_highlighted div.button_box_middle {
+white-space: nowrap;
+cursor:pointer;
+height: 20px;
+padding: 3px 3px 3px 3px;
+padding-right: 10px;
+font-size: 11px;
+font-weight: bold;
+color: #304d90;
+}
+</style>
+<table style="border: 1px solid #CCCCCC;" cellspacing="0" cellpadding="0" >
+<tr><td valign="top">
+    <div style="width:160px; ">
+        <div style="padding:5px 0px 10px 5px; font-weight:bold; font-size:10px;">Friend Lists</div>
+        <div class="SideSelected" id="friend_list_select_" style="width:160px;" onclick="select_friend_list('');"><%= image_tag('allfriends.jpg', :style => "padding:4px 10px 0px 10px; float:left;") %>All Friends</div>
+        <% #@friend_lists.each_with_index() do |friend_list, index| -%>
+            <!--<div class="SideNotSelected" id="friend_list_select_<%#=index%>" style="width:160px;" onclick="select_friend_list('<%#=index%>');"><%= image_tag('friendpaper.jpg', :style => "padding:4px 10px 0px 10px; float:left;") %><%#= h(friend_list[0]) %></div>-->
+        <% #end%>
+        </select>
+        <br/>
+        <div style="padding:15px 4px 0px 4px; font-size:12px;">
+        Sort your friends into lists!<br/>
+        Make lists of your <a style="color:#6d84b4" href="http://www.facebook.com/friends">friends page</a>
+        to select them here.
+        </div>
+    </div>
+</td><td valign="top" style="border-left:1px solid #ccc;">
+    <div style="width:595px; ">
+        <div style="padding:10px; font-weight:bold; font-size:10px; float:left;">Friend Lists</div>
+
+        <div style="float:left; padding-top:7px;">
+            <div onclick="show_ready_users();" id="show_ready_users_div" class="button_box_highlighted">
+                <div class="button_box_left"></div>
+                <div class="button_box_right"></div>
+                <div class="button_box_middle">Ready for Next Step</div>
+            </div>
+        </div>
+
+        <div style="float:left; padding-top:7px;">
+            <div onclick="show_all_users();" id="show_all_users_div" class="button_box_not_highlighted">
+                <div class="button_box_left"></div>
+                <div class="button_box_right"></div>
+                <div class="button_box_middle">Everyone</div>
+            </div>
+        </div>
+        
+        <div style="clear:both;"></div>
+        <div style="padding:10px; font-size:10px; float:left;" id="friend_list_sizes">
+            <% ([''] + (0...@friend_lists.size).to_a).each() do |friend_list_index| %>
+            <% friend_list_friends = (friend_list_index == '' ? @my_friends_with_app : @friend_lists[friend_list_index][1]) %>
+            <div id="friend_list_size_<%=friend_list_index%>" style="<%= 'display: none;' unless friend_list_index == '' %>">
+                <span class="n_users_ready">You have <%= pluralize(friend_list_friends.select{|friend| friend.voting_method.nil? || (!friend.next_end_deadline.nil? && friend.next_start_deadline >= Date.today)}.size, 'friend') %> <%= friend_list_index == '' ? '' : "in your \"#{@friend_lists[friend_list_index][0]}\" list" %> ready for the next step.</span>
+                <span class="n_users_everyone" style="display: none;">You have <%= pluralize(friend_list_friends.size, 'friend') %> <%= friend_list_index == '' ? '' : "in your \"#{@friend_lists[friend_list_index][0]}\" list" %> using BeCounted.</span>
+            </div>
+            <% end -%>
+        </div>
+
+        <div class="bc_clearfix"></div>
+        <div class="TableHeadBlue" id="table_head_name" onclick="sort_table('name');" style="width:200px;">&nbsp;&nbsp; Name</div>
+        <div class="TableHead" id="table_head_progress" onclick="sort_table('progress');" style="width:180px;">&nbsp;&nbsp; Next Step</div>
+        <div class="TableHead" id="table_head_next_end_deadline" onclick="sort_table('next_end_deadline');" style="width:105px;">&nbsp;&nbsp; Days Remaining</div>
+        <div class="TableHead" id="table_head_points" onclick="sort_table('points');" style="width:105px;">&nbsp;&nbsp; Points</div>
+        <div class="bc_clearfix"></div>
+
+        <div id="user_table">
+        <% @my_friends_with_app.each_with_index do |friend, index| %>
+          <% next_end_deadline = friend.next_end_deadline -%>
+          <% next_start_deadline = friend.next_start_deadline -%>
+          <% is_ready = friend.voting_method.nil? || (!friend.next_end_deadline.nil? && friend.next_start_deadline >= Date.today) -%>
+
+            <div class="InfoRow <%= is_ready ? 'all ready' : 'all' %>" id="user_row_<%= friend.fb_uid %>">
+                <div class="Name">
+                    <div style="padding:5px; width:50px; height:50px; float:left;">
+                        <fb:profile-pic uid="<%= friend.fb_uid %>" size="square" linked="true" />
+                    </div>
+                    <div style="padding-top:6px; width:140px; float:left;">
+                        <div style="color:#47639e;"><fb:name uid="<%= friend.fb_uid %>" capitalize="true" /></div>
+                        <div style=""><%= friend.college.name %></div>
+                        <div style="color:#47639e; padding-top:10px; font-size:10px;"><a href="http://www.facebook.com/message.php?id=<%= friend.fb_uid %>&amp;subject=&amp;msg=">message</a></div> 
+                    </div>
+                </div>
+                <div class="NextStep">
+                    <div style="padding:6px 0px 2px 4px;">
+                    <%= h(friend.next_status::TITLE) %><br/>
+                    <span style="color:#bbb">Step <%= friend.progress_ratio[0] %> of <%= friend.progress_ratio[1] %></span>
+                    <br/>
+                    <% voting_method_string = nil%>
+                    <%
+                        if friend.voting_state.nil? || friend.voting_method.nil?
+                            voting_method_string = '---'
+                        else
+                            voting_method_string = "#{friend.voting_state.code}, #{friend.voting_method == VotingMethod::Absentee ? 'absentee' : 'in person'}"
+                        end
+                    -%>
+                    <span style="color:#bbb"><%= h(voting_method_string) %></span>
+                    </div>
+                </div>
+                <div class="DaysRemaining">
+                    <div style="padding:6px 0px 2px 4px;"><%= friend.next_end_deadline.nil? ? '' : next_end_deadline - Date.today %> days</div>
+                </div>
+                <div class="Points">
+                    <div style="padding:6px 0px 2px 4px;">
+                        <%= pluralize(friend.points, 'pt') %><br/>
+                        <span style="color:#bbb"><%= pluralize(friend.achievements.count, 'achievement') %></span>
+                    </div>
+                </div>    
+            </div>
+
+        <% end -%>
+        </div>
+
+    </div>
+</td></tr>
+</table>

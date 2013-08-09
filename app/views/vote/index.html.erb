@@ -1,0 +1,176 @@
+<%= render :partial => 'vote/vote_css' %>
+<%#= stylesheet_link_tag ('vote.css') %>
+<%= render :partial => 'location/location_finder' %>
+<script type="text/javascript">
+	var ajax_in_progress = false;
+    var current_div = $("div_<%= @user.status_id %>");
+	var vote_url = "<%= url_for(:controller => 'vote', :canvas => false, :only_path => false) %>/";
+	
+    function hide_current_status(){
+        Animation(current_div.getLastChild()).to("height", "0px").blind().hide().checkpoint(1, function(){
+            $(current_div.getFirstChild()).show();
+        }).go();
+    }
+	
+	function show_active_status(status, content) {	
+		var new_div = $("div_" + status);
+		$(new_div.getFirstChild()).hide();
+		$("partial_" + status).setInnerFBML(content);
+        $(new_div.getLastChild()).animate_show();
+        current_div = new_div;
+	}
+	
+	function handle_ajax_response(response) {
+		ajax_in_progress = false;
+		if(response.find_location) {
+			new LocationFinder(function() {
+				var url = vote_url + response.on_complete;
+				do_ajax(url, {});
+			});
+		} else if(response.id && response.fbml_partial){
+			show_active_status(response.id, response.fbml_partial);
+		} else {
+			//show some sort of Ajax error message here
+		}
+	}
+	
+	function do_ajax(url, params) {
+		if (ajax_in_progress) {
+			return false;
+		}
+        ajax_in_progress = true;
+        var options = {};
+        options["ondone"] = handle_ajax_response;
+		options["onerror"] = function() {
+			//display some dialog here
+			var dialog = new Dialog().showMessage("Refresh this page", ajax_timeout_error, "Refresh!");
+			dialog.onconfirm = function() {
+				document.setLocation("<%= url_for(:controller => 'vote') %>")
+			}
+			
+		}
+        options["params"] = params;
+        ajax_request(url, options);
+        return true;
+	}
+	
+// Advances the user to the next status
+    function next_status() {
+		var url = vote_url + "next_status";
+		var ajax_successful = do_ajax(url, {});
+		if(ajax_successful) {
+			hide_current_status();
+		}
+    }
+	
+	function go_back() {
+		var title = "Need to go back to a previous step?"
+		
+		var dialog = new Dialog().showChoice(title, go_back_dialog)
+		dialog.onconfirm = function() {
+			$("go_back_status").getSelected().getValue();
+		}
+	}
+    
+	function start_over() {
+		var title = "Are you sure you want to change?";
+		var dialog = new Dialog().showChoice(title, "If you continue, you'll have to go through the walkthrough again");
+		dialog.onconfirm = function() {
+			document.setLocation("<%= url_for(:controller => 'home', :action => 'start_over') %>");
+		}
+	}
+	
+	function find_user_location_for_status(status){
+		new LocationFinder(function() {
+			var url = vote_url + status;
+			do_ajax(url, {});
+		});
+	}
+	
+    //-->
+</script>
+<fb:js-string var="ajax_timeout_error">
+	<fb:error>
+		<fb:message>
+			Facebook timed out the request because it was taking too long. You
+			should refresh the page to fix this.
+		</fb:message>
+	</fb:error>
+</fb:js-string>
+<fb:js-string var="go_back_dialog">
+	<form id="go_back_status">
+		<% @statuses.each do |status| -%>
+			<div id="go_back<%= status::ID %>">
+				<input type="radio" name="go_back" value="<%= status::ID %>"/>
+				<label><%= status::TITLE %></label>
+			</div>
+		<% end -%>
+	</form>
+</fb:js-string>
+<div id="bc_vote_left_bar">
+    <% @statuses.each_with_index do |status, index| -%>
+    <div id="div_<%= status::ID %>">
+        <div class="bc_left_step" style="<%= 'display: none' if status == @user.status && !@find_location %>">
+            <div class="bc_step_title">
+                <%= "#{(index + 1)}. #{status::TITLE}" %>
+                <span style="color:#6ab768; font-size: 10px">
+					<% if status::ID >= @user.status_id -%>
+						<%#= num_days_left_to_complete(status) %>
+					<% else -%>
+						DONE!
+					<% end -%>
+				</span>
+            </div>
+            <div class="bc_step_description">
+                <%= status::SUBTITLE %>
+            </div>
+        </div>
+        <div class="bc_left_active" style="<%= 'display: none' unless status == @user.status && !@find_location %>">
+        	<div class="bc_step"><%= "#{(index + 1)}. #{status::TITLE}" %></div>
+            <div id="partial_<%= status::ID %>">
+            	<% if status == @user.status -%>
+					<% if @find_location -%>
+						<script type="text/javascript">
+							find_user_location_for_status("<%= @user.status_method %>");
+						</script>
+					<% else -%>
+            			<%= render :partial => @user.status_method %>
+					<% end -%>
+				<% end -%>
+			</div>
+        </div>
+    </div>
+    <% end -%>
+    <div class="bc_vote_summary">
+        <div class="bc_vote_summary_content">
+            <span style="color:#666666;">Voting state: </span>
+            <%= h(@voting_state.name) %>
+            <br/>
+            <span style="color:#666666;">Method: </span>
+            <%= h(@voting_method::TITLE) %>
+            <div style="float:left; font-size:10px;">
+                <a href="#" onclick="start_over(); return false;">Change state/voting method?</a>
+            </div>
+            <!--<br/>
+            <br/>
+            <br/>
+            <b>Need Help?</b>
+            <br/>
+            Discussion boards:&nbsp;<a href="">California Voting Registration</a>,&nbsp;<a href="">California Absentee</a>,&nbsp;<a href="">Stanford Voting</a>
+            <br/>
+            <br/>
+            <%= h(@college.name) %> BeCounted volunteers:&nbsp;<a href="">John Nantz</a>-->
+        </div>
+    </div>
+</div>
+<div id="bc_vote_right_bar">
+    <div id="bc_change_box">
+        <img style="float:left; padding:5px" src="<%= image_path('change_your_world.png') %>" />
+		<img style="float:left; padding:5px" src="<%= image_path('page_previews.png') %>" />
+		<a style="float:left; padding-top:5px;" href="#" onclick="$('bc_change_box').animate_hide(600); return false;">
+			<img src="<%= image_path('cool_got_it.png') %>" />
+		</a>
+    </div>
+    <%= render :partial => 'vote/friend_feed' %>
+	<%#= render :partial => 'vote/profile' %>
+</div>

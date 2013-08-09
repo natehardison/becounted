@@ -1,0 +1,31 @@
+<div align="center">
+    <h3 align="center">Okay, so here's what we've got:</h3>
+	<div style="width: 100%; margin: 0px 0px 0px 0px;">
+		<div style="width: 200px; float: left;">
+		<h4>Your location:</h4>
+    	<ul style="list-style-type: none">
+        	<li>Your county:&nbsp;<%= h(@info[:county].name.titlecase) %></li>
+        	<li>Your town:&nbsp;<%= h(@info[:town].name.titlecase) %></li>
+        	<li>Your zip code:&nbsp;<%= h(@info[:zip_code].zip_code) %></li>
+    	</ul>
+		</div>
+		<div style="float: left;">
+			<h4>Your local elections office:</h4>
+			<% if @info[:address].nil? -%>
+				<p>We're sorry, we don't have updated information for you at this time.</p>
+			<% else -%>
+				<%= @info[:address].to_html %>
+			<% end -%>
+		</div>
+	</div>
+	<div align="center" style="margin: 10px 0px 20px 0px;">
+		<h3>
+			Don't worry about writing this down--we'll show it to you when you need it, and you
+			can always access it on your BeCounted profile page.
+		</h3>
+    	<h4 align="center">
+    		If this information's not right, click <%= link_to("here", :controller => 'location', :action => 'index') %>.
+		</h4>
+	</div>
+	<a href="<%= url_for(:controller => 'vote') %>" class="bc_button"><span>Return to Vote page!</span></a>
+</div>

@@ -1,0 +1,43 @@
+<script type="text/javascript">
+	function validate_zip_code(zipcode){
+        if (zipcode.length < 5 || zipcode.match(new RegExp("[^0-9]")) != null) {
+            return false;
+        }
+        return true;
+    }
+	
+	function set_zip_code() {
+		$("errors").hide();
+		if (!validate_zip_code($("zip_code").getValue())) {
+			$("errors").show(zip_code_format_error);
+			return;
+		}
+		$("zc_form").submit();
+	}
+</script>
+<fb:js-string var="zip_code_format_error">
+    <fb:error message="Invalid zipcode format">
+        Please enter a 5-digit string
+    </fb:error>
+</fb:js-string>
+<div id="errors" align="center">
+	<%= facebook_messages %>
+</div>
+<br/>
+<p align="center" style="font-size: 12px; font-weight: bold;">
+    Enter your ZIP code in the state you're voting in.
+</p>
+<p>
+    We're asking you for your ZIP code so that we can provide you with the
+    address and phone number of your local elections office.
+</p>
+<div id="location_dialog_content">
+    <form id="zc_form" action="<%= url_for(:controller => 'location', :action => 'set_zip_code') %>" method="post">
+        <label>
+            ZIP code:
+        </label>
+        <input id="zip_code" class="inputtext" type="text" name="zip_code" style="width: 50px" maxlength="5" />
+		<br />
+		<a href="#" class="bc_button" onclick="set_zip_code(); return false;"><span>Go!</span></a>
+    </form>
+</div>

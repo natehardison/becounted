@@ -1,0 +1,6 @@
+<h3>The zipcode "<%= h(@zip_code.zip_code) %>" falls in multiple counties.  Please select your county of residence.</h3>
+<form>
+	<label>Your county:</label>
+	<select id="county" id="county"><%= options_for_select(@counties) %></select>
+	<input type="hidden" id="zip_code" value="<%= h(@zip_code.id) %>" />
+</form>

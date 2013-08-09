@@ -1,0 +1,139 @@
+<%= render :partial => 'walkthrough_css' %>
+<%#= stylesheet_link_tag ('walkthrough.css') %>
+<script type="text/javascript">
+	function show_absentee_hurdles(hurdles, voting_state_id) {
+		var title = "Absentee Hurdles"
+		var dialog = new Dialog().showChoice(title, hurdles, "Cool", "Not cool");
+		dialog.onconfirm = function() {
+			submit_form("Absentee", voting_state_id);
+		}	
+	}
+	
+	function submit_form(voting_method, voting_state_id) {
+		$("voting_method").setValue(voting_method);
+		$("voting_state_id").setValue(voting_state_id);
+		$("bc_form").submit();
+	}
+	
+	function tell_me_more() {
+		var title = "BeCounted State Competitiveness Rankings"
+		new Dialog().showMessage(title, tell_me_more_dialog);
+	}
+</script>
+<fb:js-string var="home_absentee_hurdles">
+	<div>
+		<h3>Keep in mind that if you vote absentee:</h3>
+		<%= list_hurdles(@home_abs_hurdles) %>
+	</div>
+</fb:js-string>
+<fb:js-string var="college_absentee_hurdles">
+	<div>
+		<h3>Keep in mind that if you vote absentee:</h3>
+		<%= list_hurdles(@college_abs_hurdles) %>
+	</div>
+</fb:js-string>
+<fb:js-string var="tell_me_more_dialog">
+	<div align="center">
+		<p>
+			Our election competitiveness rankings are based off Associate Press 2004 rankings and reports, 
+			2004 election results, and 2008 competitiveness predictions.
+		</p> 
+		<br />
+		<p>
+			Learn more about state competitiveness and the 2004 results on 
+			<a href="http://en.wikipedia.org/wiki/United_States_presidential_election,_2004" target="_blank">Wikipedia</a>
+		</p>
+	</div>
+</fb:js-string>
+<div class="bc_recruit_container">
+    <div class="bc_recruit_message">
+        <%= "#{h(@college_state[:name])} vs. #{h(@home_state[:name])}" %>
+    </div>
+    <div class="bc_recruit_boxes_container">
+        <div>
+            <div class="bc_recruit_content_box">
+                <p style="font-weight:bold; color:#888; font-size:12px;">
+                    School
+                </p>
+				<% if more_competitive?(@college_state) -%>
+                	<div class="bc_recruit_message">
+                    	<span style="color:#419B3F; font-weight:bold;"><%= h(@college_state.name) %><span style="font-weight:normal; font-size:12px;">&nbsp;&nbsp;Recommended State</span></span>
+                	</div>
+                	<span style="font-size:12px;">In the 2004 presidential election, <%= "#{h(@college_state.name)} placed #{Inflector::ordinalize(@college_state.competitive)}" %> in competitiveness while <%= "#{h(@home_state.name)} placed #{Inflector.ordinalize(@home_state.competitive)}" %>, hence we recommend <%= h(@college_state.name)%>. <a href="#" onclick="tell_me_more(); return false;">Tell me more.</a></span>
+                <% else -%>
+					<div class="bc_recruit_message">
+                    	<span style="color:#888; font-weight:bold;"><%= h(@college_state.name) %></span>
+                	</div>
+				<% end -%>
+				<br/>
+                <br/>
+            </div>
+            <div class="bc_recruit_content_box">
+                <p style="font-weight:bold; color:#888; font-size:12px;">
+                    Home
+                </p>
+				<% if more_competitive?(@home_state) -%>
+					<div class="bc_recruit_message">
+                    	<span style="color:#419B3F; font-weight:bold;"><%= h(@home_state.name) %><span style="font-weight:normal; font-size:12px;">&nbsp;&nbsp;Recommended State</span></span>
+                	</div>
+					<span style="font-size:12px;">In the 2004 presidential election, <%= "#{h(@home_state.name)} placed #{Inflector::ordinalize(@home_state.competitive)}" %> in competitiveness while <%= "#{h(@college_state.name)} placed #{Inflector.ordinalize(@college_state.competitive)}" %>, hence we recommend <%= h(@home_state.name)%>. <a href="#" onclick="tell_me_more(); return false;">Tell me more.</a></span>
+				<% else -%>
+                	<div class="bc_recruit_message">
+                    	<span style="color:#888; font-weight:bold;"><%= h(@home_state[:name]) %></span>
+                	</div>
+				<% end -%>
+            </div>
+        </div>
+        <div class="bc_clearfix">
+        </div>
+        <div>
+            <div class="bc_recruit_content_box">
+                <p>Requirements</p>
+                <%= to_ul(@college_voting_reqs) %>
+            </div>
+            <div class="bc_recruit_content_box">
+            	<p>Requirements</p>
+                <%= to_ul(@home_voting_reqs) %>
+            </div>
+        </div>
+        <div class="bc_clearfix">
+        </div>
+        <div>
+        <form id="bc_form" action="<%= url_for(:controller => :walkthrough, :action => 'set_voting_method') %>" method="post">
+            <div class="bc_recruit_content_box">
+                <% if @college_state.name == "Oregon" -%>
+				<h1>Everybody gets to vote absentee in Oregon (there's no voting at polls!)</h1>
+				<% else -%>
+				<a href="#" class="bc_button <%= 'green' if more_competitive?(@college_state) %>" onclick='submit_form("InPerson", "<%= h(@college_state.id) %>"); return false;'>
+                	<span>Vote in <%= h(@college_state.code) %>, at the polls.</span>
+				</a> 
+                <br class="bc_clearfix" />
+				<% end -%>
+				<a href="#" class="bc_button <%= 'green' if more_competitive?(@college_state) %>" onclick='show_absentee_hurdles(college_absentee_hurdles, "<%= h(@college_state.id) %>"); return false;'>
+					<span>Vote in <%= h(@college_state.code) %>, by mailing an absentee ballot.</span>
+				</a>
+            </div>
+            <div class="bc_recruit_content_box">
+                <% if @home_state.name == "Oregon" -%>
+				<h1>Everybody gets to vote absentee in Oregon (there's no voting at polls!)</h1>
+				<% else -%>
+				<a href="#" class="bc_button <%= 'green' if more_competitive?(@home_state) %>" onclick='submit_form("InPerson", "<%= h(@home_state.id) %>"); return false;'>
+                	<span>Vote in <%= h(@home_state.code) %>, at the polls.</span>
+				</a> 
+                <br class="bc_clearfix" />
+				<% end -%>
+				<a href="#" class="bc_button <%= 'green' if more_competitive?(@home_state) %>" onclick='show_absentee_hurdles(home_absentee_hurdles, "<%= h(@home_state.id) %>"); return false;'>
+					<span>Vote in <%= h(@home_state.code) %>, by mailing an absentee ballot.</span>
+				</a>
+            </div>
+			<input type="hidden" id="college_id" name="college_id" value="<%= h(@college.id) %>"/>
+			<input type="hidden" id="dorm_id" name="dorm_id" value="<%= h(@dorm.id) unless @dorm.nil? %>"/>
+			<input type="hidden" id="home_state_id" name="home_state_id" value="<%= h(@home_state.id) %>"/>
+			<input type="hidden" id="register_state_id" name="register_state_id" value="<%= h(@register_state_id) %>"/>
+            <input type="hidden" id="voting_method" name="voting_method" />
+			<input type="hidden" id="voting_state_id" name="voting_state_id" />
+        </form>
+        </div>
+    </div>
+    <div class="bc_clearfix"></div>
+</div>
